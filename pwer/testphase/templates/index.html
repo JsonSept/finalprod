@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solar Irradiation Chart</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Solar Irradiation Data</h1>
+    <canvas id="irradiationChart" width="400" height="200"></canvas>
+
+    <script>
+        const ctx = document.getElementById('irradiationChart').getContext('2d');
+        const irradiationChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],  // Empty initially, will update with time
+                datasets: [{
+                    label: 'Solar Irradiation (W/m²)',
+                    data: [],
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    fill: true,
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        type: 'realtime', // Will auto-update
+                        realtime: {
+                            duration: 200, // Show data for the last 20 seconds
+                            refresh: 5000,   // Refresh every 5 seconds
+                            delay: 2000,     // Delay by 2 seconds
+                            onRefresh: updateChart
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Irradiation (W/m²)'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Function to update the chart
+        function updateChart(chart) {
+            fetch('/panel_data')
+                .then(response => response.json())
+                .then(data => {
+                    chart.data.labels.push(new Date().toLocaleTimeString());
+                    chart.data.datasets[0].data.push(data.irradiation);
+                    chart.update('quiet');
+                });
+        }
+    </script>
+</body>
+</html>

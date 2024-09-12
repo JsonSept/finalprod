@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solar Panel and Inverter Data</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Inverter Status</h1>
+        <div class="card">
+            <h2>Solar Panel Power Output</h2>
+            <p id="power-output">Loading...</p>
+        </div>
+        <div class="card">
+            <h2>Total Energy Output</h2>
+            <p id="energy-output">Loading...</p>
+        </div>
+    </div>
+
+    <script>
+        // Function to fetch solar panel data from the server
+        function fetchSolarPanelData() {
+            fetch('/panel_data')
+                .then(response => response.json())
+                .then(data => {
+                    // Update the DOM elements with the fetched data
+                    document.getElementById('power-output').textContent = data.power_output + " Watts";
+                    document.getElementById('energy-output').textContent = data.total_energy_output + " kWh";
+                })
+                .catch(error => {
+                    console.error("Error fetching data:", error);
+                    document.getElementById('power-output').textContent = "N/A";
+                    document.getElementById('energy-output').textContent = "N/A";
+                });
+        }
+
+        // Fetch data every 5 seconds (5000 milliseconds)
+        setInterval(fetchSolarPanelData, 5000);
+
+        // Fetch the initial data on page load
+        fetchSolarPanelData();
+    </script>
+</body>
+</html>

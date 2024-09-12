@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solar Panel Data</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .data-container {
+            margin: 20px 0;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            display: inline-block;
+        }
+
+        .data-item {
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .data-item span {
+            font-weight: bold;
+            color: #007BFF;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Solar Panel Data</h1>
+
+    <div class="data-container">
+        <div class="data-item">Current Solar Irradiation: <span id="irradiation">Loading...</span> W/m²</div>
+        <div class="data-item">Power Output: <span id="power-output">Loading...</span> Watts</div>
+    </div>
+
+    <script>
+        function fetchSolarData() {
+            fetch('/panel_data')
+                .then(response => response.json())
+                .then(data => {
+                    // Update the HTML elements with the fetched data
+                    document.getElementById('irradiation').textContent = data.irradiation.toFixed(2);
+                    document.getElementById('power-output').textContent = data.power_output.toFixed(2);
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                    document.getElementById('irradiation').textContent = "Error";
+                    document.getElementById('power-output').textContent = "Error";
+                });
+        }
+
+        // Fetch data every 5 seconds
+        setInterval(fetchSolarData, 5000);
+
+        // Fetch data immediately on page load
+        fetchSolarData();
+    </script>
+
+</body>
+</html>
